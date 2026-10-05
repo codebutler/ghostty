@@ -157,9 +157,7 @@ pub const Options = struct {
         /// renderer uses to draw placed images. Disabled sequences are
         /// still consumed and safely ignored.
         ///
-        /// This requires the ability to get timestamps from the OS, so
-        /// it is always disabled on freestanding targets (e.g.
-        /// wasm32-freestanding) regardless of this setting.
+        /// Freestanding embedders support direct transmissions only.
         ///
         /// C API: `ghostty_kitty_graphics_*`.
         kitty_graphics: bool = true,
@@ -267,12 +265,10 @@ pub const Options = struct {
     };
 
     /// Whether the Kitty graphics feature is effectively enabled for
-    /// the given target. Kitty graphics requires the ability to get
-    /// timestamps and there is no way to do that on freestanding
-    /// targets, so it is always disabled there regardless of the
-    /// feature setting.
+    /// the given target. Image eviction uses generation ordering; direct
+    /// transmissions do not require filesystem or shared-memory support.
     pub fn kittyGraphics(self: Options, target: std.Target) bool {
-        if (target.os.tag == .freestanding) return false;
+        _ = target;
         return self.features.kitty_graphics;
     }
 

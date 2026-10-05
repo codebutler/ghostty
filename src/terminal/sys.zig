@@ -16,7 +16,8 @@ const build_options = @import("terminal_options");
 /// and the exact semantics are up to callers. For example, the Kitty Graphics
 /// Protocol will work but cannot accept PNG images.
 pub var decode_png: ?DecodePngFn = png: {
-    if (build_options.artifact == .lib) break :png null;
+    // The freestanding WASM build bundles Wuffs for synchronous PNG decoding.
+    if (build_options.artifact == .lib and !@import("builtin").target.cpu.arch.isWasm()) break :png null;
     break :png &decodePngWuffs;
 };
 

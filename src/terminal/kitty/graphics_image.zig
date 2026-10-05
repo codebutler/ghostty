@@ -152,6 +152,9 @@ pub const LoadingImage = struct {
             return result;
         }
 
+        // Freestanding embedders accept direct transmissions only.
+        if (comptime builtin.os.tag == .freestanding) return error.UnsupportedMedium;
+
         // Verify our capabilities and limits allow this.
         {
             // Special case if we don't support decoding PNGs and the format
